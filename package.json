@@ -49,18 +49,19 @@
     "@nestjs/core": "^11.1.0",
     "@nestjs/typeorm": "^11.0.0",
     "@nestjs/testing": "11.1.0",
-    "@nestjs/platform-express": "^11.1.0"
-  },
-  "dependencies": {
+    "@nestjs/platform-express": "^11.1.0",
     "zod": "^3.24.3",
     "typeorm": "^0.3.22"
   },
+  "dependencies": {},
   "devDependencies": {
     "@nestjs/common": "^11.1.0",
     "@nestjs/core": "^11.1.0",
     "@nestjs/typeorm": "^11.0.0",
     "@nestjs/testing": "11.1.0",
     "@nestjs/platform-express": "^11.1.0",
+    "zod": "^3.24.3",
+    "typeorm": "^0.3.22",
     "@types/express": "5.0.1",
     "@types/jest": "29.5.14",
     "@types/node": "22.15.3",
