@@ -12,7 +12,7 @@
     "rootDir": "./src",
     "baseUrl": "./",
     "noLib": false,
-    "incremental": true,
+    "incremental": false,
     "skipLibCheck": true,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
