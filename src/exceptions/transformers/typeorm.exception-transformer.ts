@@ -6,16 +6,6 @@ import { AppNotFoundException } from '../not-found.exception';
 import { AppUnprocessableEntityException } from '../unprocessable-entity.exception';
 
 export class TypeORMExceptionTransformer {
-  private static joinColumnKeyValues: string[] = [];
-
-  static setJoinColumnKeyValues(values: string[]): void {
-    this.joinColumnKeyValues = values;
-  }
-
-  static getJoinColumnKeyValues(): string[] {
-    return this.joinColumnKeyValues;
-  }
-
   static transform(exception: TypeORMError): AppException | undefined {
     if (exception instanceof EntityNotFoundError) {
       return this.transformEntityNotFoundError(exception);
@@ -52,15 +42,9 @@ export class TypeORMExceptionTransformer {
 
     const matches = detail.match(/\(([^)]+)\)/);
 
-    let conflictedFields: string[] = [];
-
     if (matches && matches[1]) {
-      const keys = matches[1].split(', ').map((key: string) => key.trim());
-
-      conflictedFields = keys.filter((key: any) => !TypeORMExceptionTransformer.joinColumnKeyValues.includes(key));
+      return new AppConflictException({ conflictedFields: matches[1].split(', ').map((key: string) => key.trim()) });
     }
-
-    return new AppConflictException({ conflictedFields });
   }
 
   private static transformNumericOverflowError(_exception: QueryFailedError): AppUnprocessableEntityException {
