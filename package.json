@@ -1,7 +1,7 @@
 {
-  "name": "@furkanogutcu/nest-replace-me",
+  "name": "@furkanogutcu/nest-common",
   "version": "0.0.1",
-  "description": "",
+  "description": "Package of common structures for NestJS.",
   "author": "Furkan Ogutcu",
   "license": "MIT",
   "readme": "README.md",
@@ -36,17 +36,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/furkanogutcu/nest-replace-me.git"
+    "url": "git+https://github.com/furkanogutcu/nest-common.git"
   },
   "bugs": {
-    "url": "https://github.com/furkanogutcu/nest-replace-me/issues"
+    "url": "https://github.com/furkanogutcu/nest-common/issues"
   },
-  "homepage": "https://github.com/furkanogutcu/nest-replace-me#readme",
+  "homepage": "https://github.com/furkanogutcu/nest-common#readme",
   "peerDependencies": {
     "@nestjs/common": "^11.1.0",
-    "@nestjs/core": "^11.1.0"
+    "zod": "^3.24.3",
+    "@nestjs/typeorm": "^11.0.0",
+    "typeorm": "^0.3.22"
   },
-  "dependencies": {},
   "devDependencies": {
     "@nestjs/common": "^11.1.0",
     "@nestjs/core": "^11.1.0",
