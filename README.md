@@ -1,4 +1,4 @@
-# NestJS Common
+# nest-common
 
 [![npm version](https://img.shields.io/npm/v/@furkanogutcu/nest-common.svg)](https://www.npmjs.com/package/@furkanogutcu/nest-common)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
