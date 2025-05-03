@@ -51,7 +51,8 @@
     "@nestjs/testing": "11.1.0",
     "@nestjs/platform-express": "^11.1.0",
     "zod": "^3.24.3",
-    "typeorm": "^0.3.22"
+    "typeorm": "^0.3.22",
+    "@anatine/zod-nestjs": "^2.0.12"
   },
   "dependencies": {},
   "devDependencies": {
