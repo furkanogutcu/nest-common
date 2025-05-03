@@ -1,10 +1,14 @@
 import { sleep } from './sleep.util';
 
-export async function exponentialRetry<T>(
-  fn: () => Promise<T>,
-  maxAttempts: number = 3,
-  baseDelayMs: number = 2000,
-): Promise<T> {
+export interface ExponentialRetryOptions {
+  maxAttempts?: number;
+  baseDelayMs?: number;
+}
+
+export async function exponentialRetry<T>(fn: () => Promise<T>, options?: ExponentialRetryOptions): Promise<T> {
+  const maxAttempts = options?.maxAttempts ?? 3;
+  const baseDelayMs = options?.baseDelayMs ?? 2000;
+
   let lastError: Error | null = null;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
