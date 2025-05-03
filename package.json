@@ -1,6 +1,6 @@
 {
   "name": "@furkanogutcu/nest-common",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "description": "Package of common structures for NestJS.",
   "author": "Furkan Ogutcu",
   "license": "MIT",
