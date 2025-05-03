@@ -12,6 +12,10 @@ This package is designed to standardize structures you repeatedly use in your Ne
 - [Installation](#installation)
 - [Features](#features)
   - [Exceptions](#1-exceptions)
+  - [API Responses](#2-api-responses)
+  - [Validators and Pipes](#3-validators-and-pipes)
+  - [Decorators](#4-decorators)
+  - [Utilities](#5-utilities)
 - [Development](#development)
 - [License](#license)
 
@@ -39,25 +43,27 @@ No additional installation steps are needed beyond installing the package.
 
 - **Custom Exception Classes**: Comprehensive set of HTTP-based exception classes for consistent error responses.
 
-  | Exception Class | HTTP Status | Description |
-  |-----------------|-------------|-------------|
-  | `AppException` | - | Base exception class for all custom exceptions |
-  | `AppBadRequestException` | 400 | For invalid input, malformed requests |
-  | `AppUnauthorizedException` | 401 | For authentication failures |
-  | `AppForbiddenException` | 403 | For authorization failures |
-  | `AppNotFoundException` | 404 | For resources that couldn't be found |
-  | `AppConflictException` | 409 | For conflicting requests (e.g., duplicate entries) |
-  | `AppUnprocessableEntityException` | 422 | For semantically incorrect requests |
-  | `AppInternalException` | 500 | For server-side errors |
-  | `AppTooManyRequestException` | 429 | For rate limiting scenarios |
-  | `AppValidationException` | 400 | Specifically for input validation errors |
+  | Exception Class                   | HTTP Status | Description                                        |
+  | --------------------------------- | ----------- | -------------------------------------------------- |
+  | `AppException`                    | -           | Base exception class for all custom exceptions     |
+  | `AppBadRequestException`          | 400         | For invalid input, malformed requests              |
+  | `AppUnauthorizedException`        | 401         | For authentication failures                        |
+  | `AppForbiddenException`           | 403         | For authorization failures                         |
+  | `AppNotFoundException`            | 404         | For resources that couldn't be found               |
+  | `AppConflictException`            | 409         | For conflicting requests (e.g., duplicate entries) |
+  | `AppUnprocessableEntityException` | 422         | For semantically incorrect requests                |
+  | `AppInternalException`            | 500         | For server-side errors                             |
+  | `AppTooManyRequestException`      | 429         | For rate limiting scenarios                        |
+  | `AppValidationException`          | 400         | Specifically for input validation errors           |
 
 - **Global Exception Filter**: Automatically catches and transforms exceptions throughout your application.
+
   - Centralized error handling logic
   - Consistent error response format
   - Easy to configure through NestJS's dependency injection
 
 - **Exception Transformers**: Converts various error types to standardized app exceptions.
+
   - NestJS built-in exception transformer
   - TypeORM exception transformer
 
@@ -154,6 +160,168 @@ The `type` field in validation error details can have the following values:
 ##### Additional Components
 
 For more detailed information about the filters, transformers, and interfaces included in the exceptions package, please check the source code.
+
+### 2. API Responses
+
+#### Features
+
+- **Standardized Response Types**: Comprehensive set of response interfaces for consistent API responses.
+  - `APIResponse`: Generic type for creating standardized responses
+  - `APIResponseOnlyMessage`: Simple message-only response
+  - `PaginatedAPIResponse`: Response format for paginated data with metadata
+
+#### Usage
+
+```typescript
+import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
+import {
+  APIResponse,
+  APIResponseOnlyMessage,
+  PaginatedAPIResponse,
+  Pagination,
+  PaginationParams,
+} from '@furkanogutcu/nest-common';
+import { User } from './user.entity';
+import { CreateUserDto } from './dto/create-user.dto';
+
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Get()
+  async findAll(@Pagination() { skip, take }: PaginationParams): Promise<PaginatedAPIResponse<User>> {
+    const { items, metadata } = await this.usersService.findAll({ skip, take });
+
+    return {
+      data: items,
+      metadata,
+    };
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string): Promise<APIResponse<'user', User>> {
+    const user = await this.usersService.findOne(id);
+
+    return {
+      user,
+    };
+  }
+
+  @Post()
+  async create(@Body() createUserDto: CreateUserDto): Promise<APIResponseOnlyMessage> {
+    await this.usersService.create(createUserDto);
+
+    return {
+      message: 'User created successfully',
+    };
+  }
+}
+```
+
+### 3. Validators and Pipes
+
+#### Features
+
+- **Zod Validation Pipe**: Extended validation pipe for NestJS using Zod schema validation.
+
+  - Seamless integration with NestJS validation pipeline
+  - Throws consistent `AppValidationException` on validation errors
+  - Compatible with Zod schemas
+
+- **Common Validation Schemas**:
+  - `paginationSchema`: For standardizing pagination parameters
+  - `orderBySchema`: For standardizing sorting/ordering parameters
+  - `searchSchema`: For standardizing search parameters
+
+#### Usage
+
+##### Setting up validation globally
+
+```typescript
+import { Module } from '@nestjs/common';
+import { APP_PIPE } from '@nestjs/core';
+import { AppZodValidationPipe } from '@furkanogutcu/nest-common';
+
+@Module({
+  imports: [
+    // Your other modules
+  ],
+  controllers: [
+    // Your controllers
+  ],
+  providers: [
+    // Your other providers
+    {
+      provide: APP_PIPE,
+      useClass: AppZodValidationPipe,
+    },
+  ],
+})
+export class AppModule {}
+```
+
+### 4. Decorators
+
+#### Features
+
+- **Parameter Decorators**: Decorators for common query parameter extraction and validation.
+  - `@Pagination()`: Extracts and validates pagination parameters
+  - `@OrderBy()`: Extracts and validates ordering parameters
+  - `@Search()`: Extracts and validates search parameters
+
+#### Usage
+
+```typescript
+import { Controller, Get } from '@nestjs/common';
+import { Pagination, OrderBy, Search, PaginationParams, OrderByParam, SearchParams } from '@furkanogutcu/nest-common';
+
+@Controller('users')
+export class UsersController {
+  @Get()
+  findAll(
+    @Pagination() { skip, take }: PaginationParams,
+    @OrderBy<User>(['created_at']) orderBy: OrderByParam<User>,
+    @Search<User>(['email']) search: SearchParams<User>,
+  ) {
+    // Implement your service call with these validated parameters
+    return this.usersService.findAll({ skip, take, orderBy, where: search });
+  }
+}
+```
+
+### 5. Utilities
+
+#### Features
+
+- **Asynchronous Utilities**:
+  - `exponentialRetry`: Retry a function with exponential backoff
+  - `sleep`: Simple promise-based delay utility
+
+#### Usage
+
+```typescript
+import { exponentialRetry, sleep } from '@furkanogutcu/nest-common';
+
+// Retry a function with exponential backoff
+async function fetchWithRetry() {
+  return exponentialRetry(
+    async () => {
+      // Potentially failing operation (e.g., API call)
+      return await externalApiCall();
+    },
+    {
+      maxAttempts: 5, // Maximum of 5 attempts
+      baseDelayMs: 1000, // Starting delay of 1000ms (will grow exponentially)
+    },
+  );
+}
+
+// Simple delay utility
+async function processWithDelay() {
+  await sleep(2000); // Wait for 2 seconds
+  // Continue execution
+}
+```
 
 ## Development
 
