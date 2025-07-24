@@ -6,11 +6,11 @@ import { ExceptionCode } from './reference/exception-code.reference';
 export class AppForbiddenException extends AppException {
   constructor({
     message = 'You do not have permission to access this resource.',
-    code = ExceptionCode.InsufficientPermissions,
-  }: { message?: string; code?: ExceptionCode } = {}) {
+    code,
+  }: { message?: string; code?: string } = {}) {
     super({
       message,
-      code,
+      code: code || ExceptionCode.InsufficientPermissions,
       httpCode: HttpStatus.FORBIDDEN,
     });
   }
