@@ -2,10 +2,9 @@ import { HttpStatus } from '@nestjs/common';
 
 import { IErrorResponse } from './interfaces/error-response.interface';
 import { IValidationErrorDetails } from './interfaces/validation-error-detail.interface';
-import { ExceptionCode } from './reference/exception-code.reference';
 
 export class AppException extends Error {
-  readonly code: ExceptionCode;
+  readonly code: string;
   readonly httpCode: HttpStatus;
   readonly details?: IValidationErrorDetails[];
 

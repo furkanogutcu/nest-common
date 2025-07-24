@@ -18,7 +18,7 @@ import { AppUnprocessableEntityException } from '../unprocessable-entity.excepti
 export class NestJSExceptionTransformer {
   static transform(exception: HttpException): AppException | undefined {
     if (exception instanceof BadRequestException) {
-      return new AppBadRequestException({ message: exception.message, code: ExceptionCode.InvalidRequest });
+      return new AppBadRequestException({ message: exception.message, code: ExceptionCode.BadRequest });
     }
 
     if (exception instanceof ForbiddenException) {

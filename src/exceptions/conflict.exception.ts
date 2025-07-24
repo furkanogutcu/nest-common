@@ -8,10 +8,18 @@ import { ValidationErrorType } from './reference/validation-error-type.reference
 export class AppConflictException extends AppException {
   readonly conflictedFields: string[];
 
-  constructor({ conflictedFields }: { conflictedFields: string[] }) {
+  constructor({
+    conflictedFields,
+    message = 'Some fields already exists.',
+    code,
+  }: {
+    conflictedFields: string[];
+    message?: string;
+    code?: string;
+  }) {
     super({
-      message: 'Some fields already exists.',
-      code: ExceptionCode.SomeFieldsAlreadyExists,
+      message,
+      code: code || ExceptionCode.SomeFieldsAlreadyExists,
       httpCode: HttpStatus.CONFLICT,
       details: AppConflictException.buildDetails(conflictedFields),
     });

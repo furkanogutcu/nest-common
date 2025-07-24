@@ -10,7 +10,7 @@ export class AppInternalException extends AppException {
     message = 'An unexpected error occurred.',
     code,
     error,
-  }: { message?: string; code?: ExceptionCode; error?: Error } = {}) {
+  }: { message?: string; code?: string; error?: Error } = {}) {
     super({
       message,
       code: code || ExceptionCode.UnexpectedError,

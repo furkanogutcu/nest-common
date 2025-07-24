@@ -7,7 +7,7 @@ export class AppTooManyRequestException extends AppException {
   constructor({
     message = 'You have exceeded the number of allowed requests. Please try again later.',
     code,
-  }: { message?: string; code?: ExceptionCode } = {}) {
+  }: { message?: string; code?: string } = {}) {
     super({
       message,
       code: code || ExceptionCode.RateLimit,

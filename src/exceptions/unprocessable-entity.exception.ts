@@ -4,7 +4,7 @@ import { AppException } from './app.exception';
 import { ExceptionCode } from './reference/exception-code.reference';
 
 export class AppUnprocessableEntityException extends AppException {
-  constructor({ message, code }: { message: string; code?: ExceptionCode }) {
+  constructor({ message = 'Unprocessable entity.', code }: { message?: string; code?: string } = {}) {
     super({
       message,
       code: code || ExceptionCode.UnprocessableEntity,
