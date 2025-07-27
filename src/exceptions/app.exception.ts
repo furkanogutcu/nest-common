@@ -3,12 +3,22 @@ import { HttpStatus } from '@nestjs/common';
 import { IErrorResponse } from './interfaces/error-response.interface';
 import { IValidationErrorDetails } from './interfaces/validation-error-detail.interface';
 
-export class AppException extends Error {
+export class AppException<TDetails = IValidationErrorDetails[]> extends Error {
   readonly code: string;
   readonly httpCode: HttpStatus;
-  readonly details?: IValidationErrorDetails[];
+  readonly details?: TDetails;
 
-  constructor({ message, httpCode, code, details }: IErrorResponse['error'] & { httpCode: HttpStatus }) {
+  constructor({
+    message,
+    httpCode,
+    code,
+    details,
+  }: {
+    message: string;
+    httpCode: HttpStatus;
+    code: string;
+    details?: TDetails;
+  }) {
     super(message);
 
     this.httpCode = httpCode;
@@ -16,7 +26,7 @@ export class AppException extends Error {
     this.details = details;
   }
 
-  toJSON(): IErrorResponse {
+  toJSON(): IErrorResponse<TDetails> {
     return {
       error: {
         code: this.code,

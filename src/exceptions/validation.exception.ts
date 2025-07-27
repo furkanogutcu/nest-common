@@ -6,7 +6,7 @@ import { IValidationErrorDetails } from './interfaces/validation-error-detail.in
 import { ExceptionCode } from './reference/exception-code.reference';
 import { ValidationErrorType } from './reference/validation-error-type.reference';
 
-export class AppValidationException extends AppException {
+export class AppValidationException extends AppException<IValidationErrorDetails[]> {
   readonly zodError: ZodError;
 
   constructor(error: ZodError) {

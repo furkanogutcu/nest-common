@@ -16,7 +16,7 @@ import { AppUnauthorizedException } from '../unauthorized.exception';
 import { AppUnprocessableEntityException } from '../unprocessable-entity.exception';
 
 export class NestJSExceptionTransformer {
-  static transform(exception: HttpException): AppException | undefined {
+  static transform(exception: HttpException): AppException<any> | undefined {
     if (exception instanceof BadRequestException) {
       return new AppBadRequestException({ message: exception.message, code: ExceptionCode.BadRequest });
     }
