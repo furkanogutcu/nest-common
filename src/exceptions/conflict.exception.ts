@@ -5,7 +5,7 @@ import { IValidationErrorDetails } from './interfaces/validation-error-detail.in
 import { ExceptionCode } from './reference/exception-code.reference';
 import { ValidationErrorType } from './reference/validation-error-type.reference';
 
-export class AppConflictException extends AppException {
+export class AppConflictException extends AppException<IValidationErrorDetails[]> {
   readonly conflictedFields: string[];
 
   constructor({

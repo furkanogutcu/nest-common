@@ -6,7 +6,7 @@ import { AppNotFoundException } from '../not-found.exception';
 import { AppUnprocessableEntityException } from '../unprocessable-entity.exception';
 
 export class TypeORMExceptionTransformer {
-  static transform(exception: TypeORMError): AppException | undefined {
+  static transform(exception: TypeORMError): AppException<any> | undefined {
     if (exception instanceof EntityNotFoundError) {
       return this.transformEntityNotFoundError(exception);
     }
@@ -22,7 +22,7 @@ export class TypeORMExceptionTransformer {
 
   private static postgresQueryFailedExceptionMapper: Record<
     number,
-    (exception: QueryFailedError) => AppException | undefined
+    (exception: QueryFailedError) => AppException<any> | undefined
   > = {
     // ref: https://www.postgresql.org/docs/current/errcodes-appendix.html
     22003: TypeORMExceptionTransformer.transformNumericOverflowError,
