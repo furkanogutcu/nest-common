@@ -1,5 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
-import { ZodError, ZodIssue, ZodIssueCode } from 'zod';
+import * as z from 'zod/v4/core';
 
 import { AppException } from './app.exception';
 import { IValidationErrorDetails } from './interfaces/validation-error-detail.interface';
@@ -7,9 +7,9 @@ import { ExceptionCode } from './reference/exception-code.reference';
 import { ValidationErrorType } from './reference/validation-error-type.reference';
 
 export class AppValidationException extends AppException<IValidationErrorDetails[]> {
-  readonly zodError: ZodError;
+  readonly zodError: z.$ZodError;
 
-  constructor(error: ZodError) {
+  constructor(error: z.$ZodError) {
     super({
       code: ExceptionCode.ValidationFailed,
       httpCode: HttpStatus.BAD_REQUEST,
@@ -20,14 +20,14 @@ export class AppValidationException extends AppException<IValidationErrorDetails
     this.zodError = error;
   }
 
-  private static buildDetails(zodError: ZodError): IValidationErrorDetails[] {
-    return zodError.errors.flatMap((error): IValidationErrorDetails[] => {
+  private static buildDetails(zodError: z.$ZodError): IValidationErrorDetails[] {
+    return zodError.issues.flatMap((error): IValidationErrorDetails[] => {
       const type = this.detectDetailType(error);
 
       const paths = error.path.map((item) => item.toString());
 
-      if (error.code === ZodIssueCode.unrecognized_keys) {
-        return error.keys.map((key) => ({
+      if (error.code === 'unrecognized_keys') {
+        return error.keys.map((key: string) => ({
           type: ValidationErrorType.Unrecognized,
           path: [...paths, key].join('.'),
           message: 'This key is not recognized',
@@ -44,15 +44,17 @@ export class AppValidationException extends AppException<IValidationErrorDetails
     });
   }
 
-  private static detectDetailType(error: ZodIssue): ValidationErrorType {
+  private static detectDetailType(error: z.$ZodIssue): ValidationErrorType {
     switch (error.code) {
-      case ZodIssueCode.invalid_type: {
-        if (error.received === 'undefined') return ValidationErrorType.MissingField;
+      case 'invalid_type': {
+        if (error.message.includes('received undefined')) {
+          return ValidationErrorType.MissingField;
+        }
 
         return ValidationErrorType.Invalid;
       }
 
-      case ZodIssueCode.unrecognized_keys:
+      case 'unrecognized_keys':
         return ValidationErrorType.Unrecognized;
 
       default:

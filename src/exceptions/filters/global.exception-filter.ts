@@ -1,6 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Logger } from '@nestjs/common';
 import { TypeORMError } from 'typeorm';
-import { ZodError } from 'zod';
+import * as z from 'zod/v4/core';
 
 import { AppException } from '../app.exception';
 import { AppInternalException } from '../internal.exception';
@@ -25,7 +25,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
       let appException: AppException | undefined;
 
-      if (exception instanceof ZodError) {
+      if (exception instanceof z.$ZodError) {
         appException = new AppValidationException(exception);
       } else if (exception instanceof TypeORMError) {
         appException = TypeORMExceptionTransformer.transform(exception);
