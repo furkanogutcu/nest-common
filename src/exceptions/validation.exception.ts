@@ -9,15 +9,17 @@ import { ValidationErrorType } from './reference/validation-error-type.reference
 export class AppValidationException extends AppException<IValidationErrorDetails[]> {
   readonly zodError: z.$ZodError;
 
-  constructor(error: z.$ZodError) {
+  constructor(error?: z.$ZodError) {
     super({
       code: ExceptionCode.ValidationFailed,
       httpCode: HttpStatus.BAD_REQUEST,
       message: 'Invalid request payload.',
-      details: AppValidationException.buildDetails(error),
+      details: error ? AppValidationException.buildDetails(error) : undefined,
     });
 
-    this.zodError = error;
+    if (error) {
+      this.zodError = error;
+    }
   }
 
   private static buildDetails(zodError: z.$ZodError): IValidationErrorDetails[] {

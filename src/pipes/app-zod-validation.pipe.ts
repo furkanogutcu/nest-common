@@ -1,19 +1,20 @@
 import { ArgumentMetadata, Injectable } from '@nestjs/common';
 import { ZodValidationPipe } from 'nestjs-zod';
+import * as z from 'zod/v4/core';
 
 import { AppValidationException } from '../exceptions';
 
 @Injectable()
 export class AppZodValidationPipe extends ZodValidationPipe {
   transform(value: unknown, metadata: ArgumentMetadata) {
-    const zodSchema = (metadata?.metatype as any)?.schema;
+    try {
+      return super.transform(value, metadata);
+    } catch (error: any) {
+      if (error.error && error.error instanceof z.$ZodError) {
+        throw new AppValidationException(error.error);
+      }
 
-    if (!zodSchema) return value;
-
-    const parseResult = zodSchema.safeParse(value);
-
-    if (!parseResult.success) throw new AppValidationException(parseResult.error);
-
-    return parseResult.data;
+      throw new AppValidationException();
+    }
   }
 }
